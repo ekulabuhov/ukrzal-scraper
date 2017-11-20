@@ -33,7 +33,10 @@ request(options, function (error, response, body) {
     console.log({currentAnswerString, bodyString})
     sendMail("Different answer!", `<pre>${bodyString}</pre>`);
   } else {
-    console.log("Matching current answer.");    
-    sendMail("Matching answers", `<pre>${bodyString}</pre>`);
+    console.log("Matching current answer.");
+    // Once every hour send a ping request so I know it's alive
+    if (new Date().getMinutes() <= 10) { 
+      sendMail("Matching answers", `<pre>${bodyString}</pre>`);
+    }
   }
 });
