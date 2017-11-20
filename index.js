@@ -1,7 +1,10 @@
 var request = require("request");
+var sendMail = require("./sendMail");
+var currentAnswer = require("./currentAnswer.json");
 
 var options = { method: 'POST',
   url: 'https://booking.uz.gov.ua/purchase/search/',
+  json: true,
   headers: 
    { 'postman-token': 'e4458ab9-443a-3080-63c6-678e38a6a4ec',
      'cache-control': 'no-cache',
@@ -21,4 +24,16 @@ request(options, function (error, response, body) {
   if (error) throw new Error(error);
 
   console.log(body);
+
+  const currentAnswerString = JSON.stringify(currentAnswer, 2, 2);
+  const bodyString = JSON.stringify(body, 2, 2);
+
+  if (currentAnswerString !== bodyString) {
+    console.log("Answers do not match!");
+    console.log({currentAnswerString, bodyString})
+    sendMail("Different answer!", `<pre>${bodyString}</pre>`);
+  } else {
+    console.log("Matching current answer.");    
+    sendMail("Matching answers", `<pre>${bodyString}</pre>`);
+  }
 });

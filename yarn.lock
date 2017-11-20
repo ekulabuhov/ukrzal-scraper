@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+addressparser@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/addressparser/-/addressparser-1.0.1.tgz#47afbe1a2a9262191db6838e4fd1d39b40821746"
+
 ajv@^5.1.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.4.0.tgz#32d1cf08dbc80c432f426f12e10b2511f6b46474"
@@ -49,6 +53,17 @@ boom@5.x.x:
   dependencies:
     hoek "4.x.x"
 
+buildmail@3.10.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/buildmail/-/buildmail-3.10.0.tgz#c6826d716e7945bb6f6b1434b53985e029a03159"
+  dependencies:
+    addressparser "1.0.1"
+    libbase64 "0.1.0"
+    libmime "2.1.0"
+    libqp "1.1.0"
+    nodemailer-fetch "1.6.0"
+    nodemailer-shared "1.1.0"
+
 caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
@@ -82,6 +97,12 @@ dashdash@^1.12.0:
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
+
+dkim-signer@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/dkim-signer/-/dkim-signer-0.2.2.tgz#aa81ec071eeed3622781baa922044d7800e5f308"
+  dependencies:
+    libmime "^2.0.3"
 
 ecc-jsbn@~0.1.1:
   version "0.1.1"
@@ -155,6 +176,14 @@ http-signature@~1.2.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
+iconv-lite@0.4.13:
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
+
+iconv-lite@0.4.15:
+  version "0.4.15"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
+
 is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
@@ -188,6 +217,37 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+libbase64@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/libbase64/-/libbase64-0.1.0.tgz#62351a839563ac5ff5bd26f12f60e9830bb751e6"
+
+libmime@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/libmime/-/libmime-2.1.0.tgz#51bc76de2283161eb9051c4bc80aed713e4fd1cd"
+  dependencies:
+    iconv-lite "0.4.13"
+    libbase64 "0.1.0"
+    libqp "1.1.0"
+
+libmime@^2.0.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/libmime/-/libmime-2.1.3.tgz#25017ca5ab5a1e98aadbe2725017cf1d48a42a0c"
+  dependencies:
+    iconv-lite "0.4.15"
+    libbase64 "0.1.0"
+    libqp "1.1.0"
+
+libqp@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/libqp/-/libqp-1.1.0.tgz#f5e6e06ad74b794fb5b5b66988bf728ef1dedbe8"
+
+mailcomposer@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/mailcomposer/-/mailcomposer-3.12.0.tgz#9c5e1188aa8e1c62ec8b86bd43468102b639e8f9"
+  dependencies:
+    buildmail "3.10.0"
+    libmime "2.1.0"
+
 mime-db@~1.30.0:
   version "1.30.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.30.0.tgz#74c643da2dd9d6a45399963465b26d5ca7d71f01"
@@ -197,6 +257,16 @@ mime-types@^2.1.12, mime-types@~2.1.17:
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.17.tgz#09d7a393f03e995a79f8af857b70a9e0ab16557a"
   dependencies:
     mime-db "~1.30.0"
+
+nodemailer-fetch@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/nodemailer-fetch/-/nodemailer-fetch-1.6.0.tgz#79c4908a1c0f5f375b73fe888da9828f6dc963a4"
+
+nodemailer-shared@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nodemailer-shared/-/nodemailer-shared-1.1.0.tgz#cf5994e2fd268d00f5cf0fa767a08169edb07ec0"
+  dependencies:
+    nodemailer-fetch "1.6.0"
 
 oauth-sign@~0.8.2:
   version "0.8.2"
@@ -244,6 +314,13 @@ request@^2.83.0:
 safe-buffer@^5.0.1, safe-buffer@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
+
+sendmail@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/sendmail/-/sendmail-1.2.0.tgz#a731d80ac004c58026d48b8bfc6278b6bbc89cc0"
+  dependencies:
+    dkim-signer "^0.2.2"
+    mailcomposer "^3.12.0"
 
 sntp@2.x.x:
   version "2.1.0"
