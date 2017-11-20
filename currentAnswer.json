@@ -1,0 +1,35 @@
+{
+  "value": [
+    {
+      "num": "749К",
+      "model": 0,
+      "category": 2,
+      "travel_time": "8:03",
+      "from": {
+        "station": "Київ-Пасажирський",
+        "date": 1514549220,
+        "src_date": "2017-12-29 14:07:00"
+      },
+      "till": {
+        "station": "Івано-Франківськ",
+        "date": 1514578200,
+        "src_date": "2017-12-29 22:10:00"
+      },
+      "types": [
+        {
+          "id": "С1",
+          "title": "Сидячий першого класу",
+          "letter": "С1",
+          "places": 3
+        }
+      ],
+      "allow_stud": 1,
+      "allow_transportation": 1,
+      "allow_booking": 1,
+      "allow_roundtrip": 1
+    }
+  ],
+  "error": null,
+  "data": null,
+  "captcha": null
+}
