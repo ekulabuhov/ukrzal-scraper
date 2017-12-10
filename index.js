@@ -1,3 +1,4 @@
+require("dotenv").config();
 var request = require("request");
 var sendMail = require("./sendMail");
 
@@ -54,8 +55,19 @@ const doRequest = new Promise((resolve, reject) => {
 });
 
 Promise.all([readFromFirebase, doRequest]).then(([currentAnswer, body]) => {
-  const currentAnswerString = JSON.stringify(currentAnswer, 2, 2);
-  const bodyString = JSON.stringify(body, 2, 2);
+  // Since firebase doesn't store null values - we need to remove them here too
+  Object.keys(body).forEach(key => {
+    if (body[key] === null) delete body[key];
+  });
+
+  // Sorting keys to make stringify deterministic
+  // https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify
+  const currentAnswerString = JSON.stringify(
+    currentAnswer,
+    Object.keys(currentAnswer).sort(),
+    2
+  );
+  const bodyString = JSON.stringify(body, Object.keys(body).sort(), 2);
 
   if (currentAnswerString !== bodyString) {
     console.log("Answers do not match!");

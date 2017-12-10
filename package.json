@@ -5,6 +5,7 @@
   "author": "Eugene Kulabuhov <eugene.kulabuhov@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "firebase-admin": "^5.5.1",
     "request": "^2.83.0",
     "sendmail": "^1.2.0"
