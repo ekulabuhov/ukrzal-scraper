@@ -3,7 +3,11 @@ var sendMail = require("./sendMail");
 
 var admin = require("firebase-admin");
 var serviceAccount = require("./ukrzal-scraper-firebase-adminsdk-tqhol-7c07aa7391.json");
-serviceAccount.privateKey = process.env.firebase_private_key;
+// https://stackoverflow.com/questions/39492587/escaping-issue-with-firebase-privatekey-as-a-heroku-config-variable
+serviceAccount.privateKey = process.env.firebase_private_key.replace(
+  /\\n/g,
+  "\n"
+);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
