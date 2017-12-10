@@ -79,6 +79,7 @@ Promise.all([readFromFirebase, doRequest]).then(([currentAnswer, body]) => {
     // Once every hour send a ping request so I know it's alive
     if (new Date().getMinutes() <= 10) {
       sendMail("Matching answers", `<pre>${bodyString}</pre>`);
-    }
+    }    
   }
+  process.exit();
 });
