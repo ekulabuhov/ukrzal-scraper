@@ -1,31 +1,26 @@
 require("dotenv").config();
-var request = require("request");
-var sendMail = require("./sendMail");
+const request = require("request");
+const moment = require("moment");
+const stringify = require("json-stable-stringify");
 
-var admin = require("firebase-admin");
-var serviceAccount = require("./ukrzal-scraper-firebase-adminsdk-tqhol-7c07aa7391.json");
+const sendMail = require("./sendMail");
+const config = require("./config");
+
+const admin = require("firebase-admin");
+const serviceAccount = require(`./${config.firebaseConfig}`);
 // https://stackoverflow.com/questions/39492587/escaping-issue-with-firebase-privatekey-as-a-heroku-config-variable
-serviceAccount.privateKey = process.env.firebase_private_key.replace(
-  /\\n/g,
-  "\n"
-);
+serviceAccount.privateKey = config.firebasePrivateKey.replace(/\\n/g, "\n");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://ukrzal-scraper.firebaseio.com"
+  databaseURL: config.firebaseDatabaseURL
 });
 
 // As an admin, the app has access to read and write all data, regardless of Security Rules
-var db = admin.database();
-var ref = db.ref();
+const db = admin.database();
+const ref = db.ref();
 
-const readFromFirebase = new Promise(resolve => {
-  ref.once("value", function(snapshot) {
-    resolve(snapshot.val());
-  });
-});
-
-var options = {
+const options = {
   method: "POST",
   url: "https://booking.uz.gov.ua/purchase/search/",
   json: true,
@@ -47,39 +42,63 @@ var options = {
   }
 };
 
-const doRequest = new Promise((resolve, reject) => {
-  request(options, function(error, response, body) {
-    if (error) reject(error);
-    resolve(body);
+// from 25 of December up till 4th of January
+for (
+  var date = moment("2017-12-25");
+  date.isBefore("2018-01-04");
+  date.add(1, "day")
+) {
+  const formatedDate = date.format("DD.MM.YYYY");
+  const preservedDate = date.format("YYYY-MM-DD");
+  const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+  const getLastFirebaseRecord = new Promise(resolve => {
+    db
+      .ref(preservedDate)
+      .orderByKey()
+      .limitToLast(1)
+      .on("child_added", function(snapshot) {
+        resolve({ preservedDate, key: snapshot.key, val: snapshot.val() });
+      });
   });
-});
 
-Promise.all([readFromFirebase, doRequest]).then(([currentAnswer, body]) => {
-  // Since firebase doesn't store null values - we need to remove them here too
-  Object.keys(body).forEach(key => {
-    if (body[key] === null) delete body[key];
+  options.formData.date_dep = formatedDate;
+
+  Promise.all([
+    queryUkrZal(options),
+    getLastFirebaseRecord
+  ]).then(([ukrZalAnswer, firebaseAnswer]) => {
+    // Since firebase doesn't store null values - we need to remove them here too
+    Object.keys(ukrZalAnswer).forEach(key => {
+      if (ukrZalAnswer[key] === null) delete ukrZalAnswer[key];
+    });
+
+    // Deterministic stringify
+    // https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify
+    const ukrZalAnswerString = stringify(ukrZalAnswer);
+    const firebaseAnswerString = stringify(firebaseAnswer.val);
+
+    if (ukrZalAnswerString !== firebaseAnswerString) {
+      console.log("Answers do not match!");
+      console.log("firebaseAnswerString", firebaseAnswerString);
+      console.log("ukrZalAnswerString", ukrZalAnswerString);
+      db.ref(preservedDate).update({ [currentDate]: ukrZalAnswer });
+      sendMail(`UkrZal: ${preservedDate}`, `<pre>${ukrZalAnswerString}</pre>`);
+    } else {
+      console.log("Matching current answer.");
+      console.log({ ukrZalAnswerString, firebaseAnswerString });
+      // Once every hour send a ping request so I know it's alive
+      // if (new Date().getMinutes() <= 10) {
+      //   sendMail("Matching answers", `<pre>${bodyString}</pre>`);
+      // }
+    }
   });
+}
 
-  // Sorting keys to make stringify deterministic
-  // https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify
-  const currentAnswerString = JSON.stringify(
-    currentAnswer,
-    Object.keys(currentAnswer).sort(),
-    2
-  );
-  const bodyString = JSON.stringify(body, Object.keys(body).sort(), 2);
-
-  if (currentAnswerString !== bodyString) {
-    console.log("Answers do not match!");
-    console.log({ currentAnswerString, bodyString });
-    ref.set(body);
-    sendMail("Different answer!", `<pre>${bodyString}</pre>`);
-  } else {
-    console.log("Matching current answer.");
-    // Once every hour send a ping request so I know it's alive
-    if (new Date().getMinutes() <= 10) {
-      sendMail("Matching answers", `<pre>${bodyString}</pre>`);
-    }    
-  }
-  process.exit();
-});
+function queryUkrZal(options) {
+  return new Promise((resolve, reject) => {
+    request(options, function(error, response, body) {
+      if (error) reject(error);
+      resolve(body);
+    });
+  });
+}
