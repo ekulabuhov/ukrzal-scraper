@@ -30,10 +30,10 @@ const options = {
     "content-type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
   },
   formData: {
-    station_id_from: "2200001",
-    station_id_till: "2218200",
-    station_from: "Київ",
-    station_till: "Івано-Франківськ",
+    station_id_till: "2200001",
+    station_id_from: "2218200",
+    station_till: "Київ",
+    station_from: "Івано-Франківськ",
     date_dep: "29.12.2017",
     time_dep: "00:00",
     time_dep_till: "",
@@ -42,23 +42,30 @@ const options = {
   }
 };
 
-// from 25 of December up till 4th of January
 for (
-  var date = moment("2018-01-20");
-  date.isBefore("2018-01-21");
+  var date = moment("2018-01-21");
+  date.isBefore("2018-01-22");
   date.add(1, "day")
 ) {
   const formatedDate = date.format("DD.MM.YYYY");
   const preservedDate = date.format("YYYY-MM-DD");
   const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
   const getLastFirebaseRecord = new Promise(resolve => {
-    db
-      .ref(preservedDate)
-      .orderByKey()
-      .limitToLast(1)
-      .on("child_added", function(snapshot) {
-        resolve({ preservedDate, key: snapshot.key, val: snapshot.val() });
-      });
+    db.ref(preservedDate).once("value").then(snapshot => {
+      if (snapshot.exists()) {
+        // Return the last record
+        db
+          .ref(preservedDate)
+          .orderByKey()
+          .limitToLast(1)
+          .on("child_added", function(snapshot) {
+            resolve({ preservedDate, key: snapshot.key, val: snapshot.val() });
+          });
+      } else {
+        // Record not found, return empty result
+        resolve({ preservedDate });
+      }
+    });
   });
 
   options.formData.date_dep = formatedDate;
@@ -82,10 +89,13 @@ for (
       console.log("firebaseAnswerString", firebaseAnswerString);
       console.log("ukrZalAnswerString", ukrZalAnswerString);
       db.ref(preservedDate).update({ [currentDate]: ukrZalAnswer });
-      sendMail(`UkrZal: ${preservedDate}`, `<pre>${ukrZalAnswerString}</pre>`);
+      sendMail(`UkrZal: ${preservedDate}`, `<pre>${ukrZalAnswerString}</pre>`)
+        .then(() => process.exit())
+        .catch(() => process.exit());
     } else {
       console.log("Matching current answer.");
       console.log({ ukrZalAnswerString, firebaseAnswerString });
+      process.exit();
     }
   });
 }
