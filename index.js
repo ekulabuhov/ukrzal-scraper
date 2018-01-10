@@ -44,8 +44,8 @@ const options = {
 
 // from 25 of December up till 4th of January
 for (
-  var date = moment("2017-12-25");
-  date.isBefore("2018-01-04");
+  var date = moment("2018-01-20");
+  date.isBefore("2018-01-21");
   date.add(1, "day")
 ) {
   const formatedDate = date.format("DD.MM.YYYY");
@@ -86,10 +86,6 @@ for (
     } else {
       console.log("Matching current answer.");
       console.log({ ukrZalAnswerString, firebaseAnswerString });
-      // Once every hour send a ping request so I know it's alive
-      // if (new Date().getMinutes() <= 10) {
-      //   sendMail("Matching answers", `<pre>${bodyString}</pre>`);
-      // }
     }
   });
 }
