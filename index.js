@@ -89,7 +89,13 @@ for (
       console.log("firebaseAnswerString", firebaseAnswerString);
       console.log("ukrZalAnswerString", ukrZalAnswerString);
       db.ref(preservedDate).update({ [currentDate]: ukrZalAnswer });
-      sendMail(`UkrZal: ${preservedDate}`, `<pre>${ukrZalAnswerString}</pre>`)
+      const formattedAnswer = ukrZalAnswer.value.map(val => 
+        `<b>${val.num}</b> <br/>` +
+        `${val.from.station} ${val.from.src_date} <br/>` +
+        `${val.till.station} ${val.till.src_date} <br/>` +
+        val.types.map(type => `${type.title} - ${type.letter}: ${type.places} <br/>`).join('')
+      ).join('<br/><br/>')
+      sendMail(`UkrZal: ${preservedDate}`, formattedAnswer)
         .then(() => process.exit())
         .catch(() => process.exit());
     } else {
