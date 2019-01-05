@@ -38,8 +38,8 @@ const options = {
 };
 
 for (
-  var date = moment("2019-01-11");
-  date.isBefore("2019-01-12");
+  var date = moment("2019-01-13");
+  date.isBefore("2019-01-14");
   date.add(1, "day")
 ) {
   const preservedDate = date.format("YYYY-MM-DD");
