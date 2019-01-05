@@ -22,7 +22,7 @@ const ref = db.ref();
 
 const options = {
   method: "POST",
-  url: "https://booking.uz.gov.ua/purchase/search/",
+  url: 'https://booking.uz.gov.ua/ru/train_search/',
   json: true,
   headers: {
     "postman-token": "e4458ab9-443a-3080-63c6-678e38a6a4ec",
@@ -30,24 +30,18 @@ const options = {
     "content-type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
   },
   formData: {
-    station_id_till: "2200001",
-    station_id_from: "2218200",
-    station_till: "Київ",
-    station_from: "Івано-Франківськ",
-    date_dep: "29.12.2017",
-    time_dep: "00:00",
-    time_dep_till: "",
-    another_ec: "0",
-    search: ""
+    to: "2200001",
+    from: "2218200",
+    date: "29.12.2017",
+    time: "00:00"
   }
 };
 
 for (
-  var date = moment("2018-01-21");
-  date.isBefore("2018-01-22");
+  var date = moment("2019-01-11");
+  date.isBefore("2019-01-12");
   date.add(1, "day")
 ) {
-  const formatedDate = date.format("DD.MM.YYYY");
   const preservedDate = date.format("YYYY-MM-DD");
   const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
   const getLastFirebaseRecord = new Promise(resolve => {
@@ -68,7 +62,7 @@ for (
     });
   });
 
-  options.formData.date_dep = formatedDate;
+  options.formData.date = preservedDate;
 
   Promise.all([
     queryUkrZal(options),
@@ -89,10 +83,10 @@ for (
       console.log("firebaseAnswerString", firebaseAnswerString);
       console.log("ukrZalAnswerString", ukrZalAnswerString);
       db.ref(preservedDate).update({ [currentDate]: ukrZalAnswer });
-      const formattedAnswer = ukrZalAnswer.value.map(val => 
+      const formattedAnswer = ukrZalAnswer.data.list.map(val => 
         `<b>${val.num}</b> <br/>` +
-        `${val.from.station} ${val.from.src_date} <br/>` +
-        `${val.till.station} ${val.till.src_date} <br/>` +
+        `${val.from.station} ${val.from.date} ${val.from.time} <br/>` +
+        `${val.to.station} ${val.to.date} ${val.to.time} <br/>` +
         val.types.map(type => `${type.title} - ${type.letter}: ${type.places} <br/>`).join('')
       ).join('<br/><br/>')
       sendMail(`UkrZal: ${preservedDate}`, formattedAnswer)

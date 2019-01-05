@@ -10,6 +10,6 @@
     "json-stable-stringify": "^1.0.1",
     "moment": "^2.19.4",
     "request": "^2.83.0",
-    "sendmail": "^1.2.0"
+    "sendmail": "^1.4.1"
   }
 }
